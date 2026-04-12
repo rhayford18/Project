@@ -132,3 +132,80 @@ class Game:
         if self.board.grid[row][col] is not None:
             return False
         
+        row_diff = row - piece.row
+        col_diff = abs(col - piece.col)
+        direction = -1 if piece.color == Red else 1
+
+        #regular player movememnt
+        if row_diff == direction and col_diff == 1:
+            return True
+        
+        #Player vs Player caputre 
+        if row_diff == 2 * direction and col_diff == 2:
+            jumped_row = piece.row + direction 
+            jumped_col = (piece.col + col) // 2
+            jumped_piece = self. board. grid[jumped_row][jumped_col]
+            if jumped_piece and jumped_piece.color != piece.color:
+                self.board.remove_piece(jumped_row, jumped_col)
+                return True 
+
+        return False 
+
+    def change_turn(self):
+        self.turn + Black if self.turn == Red else Red
+        self.last_tick = pygame.time.get_ticks()
+
+    def draw_gameover(self):
+        text = self.font.render(f"{self.winner} wins!", True, White)
+        self.screen.blit(text, (Width // 2 - 120, Height // 2)) 
+
+    def draw(self):
+        self.board.draw(self.screen)
+        self.drawtimer()
+
+        if self.selcted:
+            pygame.draw.rect(
+                self.screen,
+                Blue,
+                (
+                    self.selected.col * Size,
+                    self.selcted.row * Size,
+                    Size,
+                    Size
+                ),
+                3
+            ) 
+        if self.gameover:
+            self.draw_gameover()
+#The Main loop that runs the game 
+def main():
+    screen = pygame.display.set_mode(Width, Height)
+    pygame.display.set_caption("Timed Checkers")
+    clock = pygame.time.Clock()
+
+    game = Game()
+
+    running = True 
+    while running:
+        clock.tick(Fps)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False 
+            if event. type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                if y < Width:
+                    row = y // Size
+                    col = x // Size
+                    game.select(row, col)
+        if not game.gameover:
+            game.updatetimer()
+
+        screen .fill(0, 0, 0)  
+        game.draw()
+        pygame.display.update()
+
+    pygame.quit()
+    sys.exit()
+
+if __name__ == "__main__":
+    main()           
