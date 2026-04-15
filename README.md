@@ -18,3 +18,10 @@ Technologies Used
 Python 3
 Pygame
 
+# Future Steps 
+Future Improvements
+Enforce mandatory captures
+Add win detection and end-game screen
+Improve king visuals
+Add restart and pause options
+Optional AI opponent
